@@ -11,15 +11,12 @@ defineProps({
 <template>
   <div class="py-4">
     <checkout-totals-line description="Subtotal" :price="subtotal" />
-    <checkout-totals-line
-      description="Estimated Shipping"
-      :price="estimatedShipping"
-    />
-    <checkout-totals-line description="Estimated Tax" :price="estimatedTax" />
+    <checkout-totals-line description="Estimated Shipping" />
+    <checkout-totals-line description="Estimated Tax" />
   </div>
   <checkout-totals-line
     class="font-semibold text-emerald-500 text-lg"
     description="TOTAL"
-    :price="total"
+    :price="subtotal"
   />
 </template>

@@ -2,15 +2,17 @@
 import { ref, computed } from "vue";
 import { formatter } from "../helpers.js";
 
-const price = ref(null);
-
 const props = defineProps({
   description: String,
   price: Number,
 });
 
 const formattedPrice = computed(() => {
-  return formatter.format(props.price / 100);
+  if (props.price) {
+    return formatter.format(props.price / 100);
+  } else {
+    return "Calculated at next step";
+  }
 });
 </script>
 

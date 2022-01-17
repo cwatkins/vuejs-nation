@@ -16,7 +16,6 @@ const cart = [
     image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
     quantity: 1,
     price: 10995,
-    stripePrice: "todo",
   },
 ];
 
@@ -32,7 +31,6 @@ const redirectToStripe = async () => {
     isLoading.value = false;
     errorMessage.value = error.message;
   }
-
   window.location.href = url;
 };
 </script>
