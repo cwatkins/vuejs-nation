@@ -1,9 +1,11 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import CheckoutProduct from "./components/CheckoutProduct.vue";
 import CheckoutTotals from "./components/CheckoutTotals.vue";
 import CheckoutButton from "./components/CheckoutButton.vue";
-const checkOutSession = reactive({});
+
+const isLoading = ref(false);
+const errorMessage = ref(null);
 
 const cart = [
   {
@@ -17,6 +19,22 @@ const cart = [
     stripePrice: "todo",
   },
 ];
+
+const redirectToStripe = async () => {
+  isLoading.value = true;
+
+  const response = await fetch("/api/create-checkout-session", {
+    method: "POST",
+  });
+  const { error, url } = await response.json();
+
+  if (error) {
+    isLoading.value = false;
+    errorMessage.value = error.message;
+  }
+
+  window.location.href = url;
+};
 </script>
 
 <template>
@@ -46,6 +64,6 @@ const cart = [
         />
       </div>
     </section>
-    <checkout-button />
+    <checkout-button :isLoading="isLoading" @click="redirectToStripe" />
   </div>
 </template>

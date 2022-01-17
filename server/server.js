@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
+
 const { resolve } = require("path");
-// Copy the .env.example in the root into a .env file in this folder
 require("dotenv").config({ path: "./.env" });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -22,22 +22,26 @@ app.use(
 
 // Create a Checkout Session
 app.post("/create-checkout-session", async (req, res) => {
-  const domainURL = process.env.DOMAIN;
+  const lineItems = [
+    {
+      price: "price_1KIh8uIxbMEkLtTyf84gZwqo",
+      quantity: 1,
+    },
+  ];
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    line_items: [
-      {
-        price: process.env.PRICE,
-        quantity: 1,
-      },
-    ],
-    success_url: `${domainURL}/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${domainURL}/canceled`,
-    // automatic_tax: { enabled: true }
-  });
-
-  return res.redirect(303, session.url);
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: lineItems,
+      success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:3000/canceled`,
+      automatic_tax: { enabled: true },
+    });
+    return res.send({ url: session.url });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({ error: error.message });
+  }
 });
 
 // Fetch the Checkout Session to display the JSON result on the success page
@@ -77,4 +81,4 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(4243, () => console.log(`Node server listening on port ${4242}!`));
+app.listen(4242, () => console.log(`Node server listening on port ${4242}!`));

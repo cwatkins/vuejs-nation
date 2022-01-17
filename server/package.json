@@ -4,8 +4,9 @@
   "description": "Accept payments with Stripe Checkout",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js",
+    "serve": "yarn start",
+    "test": "echo \"Error: there are no tests!\" && exit 1"
   },
   "author": "cwatkins",
   "license": "ISC",
@@ -14,5 +15,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "stripe": "^8.195.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
