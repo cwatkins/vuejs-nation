@@ -24,7 +24,7 @@ app.use(
 app.post("/create-checkout-session", async (req, res) => {
   const lineItems = [
     {
-      price: "price_1KIh8uIxbMEkLtTyf84gZwqo",
+      price: process.env.PRICE,
       quantity: 1,
     },
   ];
@@ -34,8 +34,19 @@ app.post("/create-checkout-session", async (req, res) => {
       mode: "payment",
       line_items: lineItems,
       success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:3000/canceled`,
+      cancel_url: `http://localhost:3000/`,
       automatic_tax: { enabled: true },
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA"],
+      },
+      shipping_options: [
+        {
+          shipping_rate: process.env.SHIPPING_RATE_ONE,
+        },
+        {
+          shipping_rate: process.env.SHIPPING_RATE_TWO,
+        },
+      ],
     });
     return res.send({ url: session.url });
   } catch (error) {
@@ -47,8 +58,12 @@ app.post("/create-checkout-session", async (req, res) => {
 // Fetch the Checkout Session to display the JSON result on the success page
 app.get("/checkout-session", async (req, res) => {
   const { sessionId } = req.query;
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-  res.send(session);
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    res.send(session);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 });
 
 // Webhook handler for asynchronous events.
